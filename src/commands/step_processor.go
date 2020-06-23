@@ -14,7 +14,6 @@ import (
 	"github.com/ori-amizur/introspector/src/session"
 )
 
-const defaultNextStepOnErrorTimeout = 120
 
 type HandlerType func(string, ...string) (stdout string, stderr string, exitCode int)
 
@@ -87,7 +86,7 @@ func (s *stepSession) processSingleSession() int64 {
 	result, err := s.Client().Installer.GetNextSteps(s.Context(), &params)
 	if err != nil {
 		s.Logger().Warnf("Could not query next steps: %s", err.Error())
-		return defaultNextStepOnErrorTimeout
+		return int64(config.GlobalAgentConfig.IntervalSecs)
 	} else {
 		s.handleSteps(result.Payload)
 	}

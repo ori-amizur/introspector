@@ -308,7 +308,7 @@ var _ = Describe("Agent tests", func() {
 		Expect(err).ToNot(HaveOccurred())
 		err = deleteStub(nextStepsStubID)
 		Expect(err).NotTo(HaveOccurred())
-		nextStepsStubID, err = addNextStepStub(hostID,
+		nextStepsStubID, err = addNextStepStub(hostID, defaultnextInstructionSeconds,
 			&models.Step{
 				StepType: models.StepTypeFreeNetworkAddresses,
 				StepID:   "free-addresses",
@@ -602,11 +602,11 @@ func addRegisterStub(hostID string) (string, error) {
 	return addStub(&stub)
 }
 
-func addNextStepStub(hostID string, nextInstructionSeconds int64, instrusctions ...*models.Step) (string, error) {
-	if instrusctions == nil {
-		instrusctions = make([]*models.Step, 0)
+func addNextStepStub(hostID string, nextInstructionSeconds int64, instructions ...*models.Step) (string, error) {
+	if instructions == nil {
+		instructions = make([]*models.Step, 0)
 	}
-	steps := models.Steps{NextInstructionSeconds: nextInstructionSeconds, Instructions: instrusctions}
+	steps := models.Steps{NextInstructionSeconds: nextInstructionSeconds, Instructions: instructions}
 	b, err := json.Marshal(steps)
 	if err != nil {
 		return "", err
