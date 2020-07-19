@@ -4,7 +4,7 @@ import (
 	"flag"
 	"os"
 
-	"github.com/filanov/bm-inventory/client"
+	"github.com/ori-amizur/introspector/generated/bm-inventory/client"
 )
 
 var GlobalAgentConfig struct {

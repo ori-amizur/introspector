@@ -6,7 +6,7 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/filanov/bm-inventory/models"
+	"github.com/ori-amizur/introspector/generated/bm-inventory/models"
 	"github.com/ori-amizur/introspector/src/scanners"
 	log "github.com/sirupsen/logrus"
 )

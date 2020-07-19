@@ -5,8 +5,8 @@ import (
 
 	"github.com/go-openapi/strfmt"
 
-	"github.com/filanov/bm-inventory/client/installer"
-	"github.com/filanov/bm-inventory/models"
+	"github.com/ori-amizur/introspector/generated/bm-inventory/client/installer"
+	"github.com/ori-amizur/introspector/generated/bm-inventory/models"
 	"github.com/ori-amizur/introspector/src/config"
 	"github.com/ori-amizur/introspector/src/scanners"
 	"github.com/ori-amizur/introspector/src/session"

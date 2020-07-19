@@ -9,7 +9,8 @@ containers:
     hardware_info: Dockerfile.hardware_info
 volumes:
     - $HOME/.cache/go-build:$HOME/.cache/go-build
+    - $HOME/.cache/golangci-lint:$HOME/.cache/golangci-lint
     - $HOME/go/pkg:/go/pkg
-    - $HOME/.docker:$HOME/.docker
 env:
     SERVICE: $SERVICE
+    GOCACHE: "/go/pkg/mod"

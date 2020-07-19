@@ -8,9 +8,9 @@ import (
 
 	"github.com/go-openapi/strfmt"
 
-	"github.com/filanov/bm-inventory/models"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
+	"github.com/ori-amizur/introspector/generated/bm-inventory/models"
 )
 
 var _ = Describe("Hostname test", func() {

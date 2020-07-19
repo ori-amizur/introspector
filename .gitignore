@@ -3,3 +3,9 @@ build
 .idea
 subsystem/logs
 .project
+
+client
+models
+swagger.yaml
+
+**/mock_*.go

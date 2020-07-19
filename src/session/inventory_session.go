@@ -6,8 +6,8 @@ import (
 	"net/http"
 	"net/url"
 
-	"github.com/filanov/bm-inventory/client"
 	"github.com/filanov/bm-inventory/pkg/requestid"
+	"github.com/ori-amizur/introspector/generated/bm-inventory/client"
 	"github.com/ori-amizur/introspector/src/config"
 	"github.com/sirupsen/logrus"
 )
