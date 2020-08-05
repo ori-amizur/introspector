@@ -1,0 +1,4 @@
+FROM registry.fedoraproject.org/fedora-minimal:latest
+RUN microdnf install tar && microdnf update systemd && microdnf clean all
+ADD build/logs_sender /usr/bin/logs_sender
+CMD ["/usr/bin/logs_sender"]

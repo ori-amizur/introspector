@@ -3,6 +3,7 @@ module github.com/ori-amizur/introspector
 go 1.13
 
 require (
+	github.com/coreos/go-systemd v0.0.0-20190321100706-95778dfbb74e
 	github.com/filanov/bm-inventory v1.0.7-0.20200727091643-3b3e888d1fe8
 	github.com/go-openapi/strfmt v0.19.5
 	github.com/go-openapi/swag v0.19.9
