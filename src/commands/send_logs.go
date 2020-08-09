@@ -32,7 +32,7 @@ func getJournalLogsWithTag(tag string, since string, outputFilePath string) erro
 
 	err = cmd.Run()
 	if err != nil {
-		log.WithError(err).Errorf("Failed to run journalctl command, output %s", stdoutBuf)
+		log.WithError(err).Errorf("Failed to run journalctl command, output %s", stdoutBuf.String())
 		return err
 	}
 	return nil
