@@ -27,7 +27,7 @@ func createRegisterParams() *installer.RegisterHostParams {
 
 func RegisterHostWithRetry() {
 	for {
-		s := session.New()
+		s := session.New(config.GlobalAgentConfig.TargetURL)
 		registerResult, err := s.Client().Installer.RegisterHost(s.Context(), createRegisterParams())
 		if err == nil {
 			CurrentHost = registerResult.Payload

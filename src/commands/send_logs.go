@@ -3,9 +3,15 @@ package commands
 import (
 	"bytes"
 	"fmt"
+	"github.com/ori-amizur/introspector/src/config"
 	"os"
 	"os/exec"
 	"path"
+
+	"github.com/go-openapi/strfmt"
+	"github.com/openshift/assisted-service/client/installer"
+	"github.com/ori-amizur/introspector/src/session"
+	"github.com/ori-amizur/introspector/src/util"
 
 	log "github.com/sirupsen/logrus"
 )
@@ -56,22 +62,61 @@ func archiveFilesInFolder(inputPath string, outputFile string, removeFiles bool)
 	if removeFiles {
 		args = append(args, "--remove-files")
 	}
-	cmd := exec.Command("tar", args...)
-	err := cmd.Run()
-	if err != nil {
-		log.WithError(err).Errorf("Failed to run to archive %s", inputPath)
-		return err
+
+	_, err, execCode := util.Execute("tar", args...)
+
+	if execCode != 0 {
+		log.Errorf("Failed to run to archive %s. output", inputPath, execCode)
+		return fmt.Errorf(err)
 	}
 	return nil
 }
 
-func SendLogs(tags []string, since string) error {
+func uploadLogs(filepath string, clusterID strfmt.UUID, hostId strfmt.UUID, removeAfterUpload bool, inventoryUrl string) error {
+	uploadFile, err := os.Open(filepath)
+	defer uploadFile.Close()
+	if err != nil {
+		log.WithError(err).Errorf("Failed to open file %s for upload", uploadFile)
+		return err
+	}
+
+	fmt.Println("PARAMS ", hostId, clusterID, inventoryUrl)
+	invSession := session.New(inventoryUrl)
+	params := installer.UploadHostLogsParams{
+		Upfile:    uploadFile,
+		ClusterID: clusterID,
+		HostID:    hostId,
+	}
+
+	_, err = invSession.Client().Installer.UploadHostLogs(invSession.Context(), &params)
+
+	if err != nil {
+		log.WithError(err).Errorf("Failed to upload file %s to assisted-service", filepath)
+		return err
+	}
+
+	if removeAfterUpload {
+		_ = os.Remove(filepath)
+	}
+	return nil
+}
+
+func SendLogs() error {
+	tags := config.LogsSenderConfig.Tags.ToStringList()
+
 	log.Infof("Start gathering journalctl logs with tags %s", tags)
+	archivePath := fmt.Sprintf("%s/logs.tar.gz", logsDir)
 	if err := createDirIfNotExist(logsTmpFilesDir); err != nil {
 		return err
 	}
 	for _, tag := range tags {
-		_ = getJournalLogsWithTag(tag, since, path.Join(logsTmpFilesDir, fmt.Sprintf("%s.logs", tag)))
+		_ = getJournalLogsWithTag(tag, config.LogsSenderConfig.Since, path.Join(logsTmpFilesDir, fmt.Sprintf("%s.logs", tag)))
 	}
-	return archiveFilesInFolder(logsTmpFilesDir, fmt.Sprintf("%s/logs.tar.gz", logsDir), false)
+
+	if err := archiveFilesInFolder(logsTmpFilesDir, archivePath, config.LogsSenderConfig.CleanWhenDone); err != nil {
+		return err
+	}
+    // strfmt.UUID(config.LogsSenderConfig.ClusterID)
+	return uploadLogs(archivePath, strfmt.UUID(config.LogsSenderConfig.ClusterID),
+		strfmt.UUID(config.LogsSenderConfig.HostID), config.LogsSenderConfig.CleanWhenDone, config.LogsSenderConfig.TargetURL)
 }
