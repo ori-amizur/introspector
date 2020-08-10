@@ -21,7 +21,7 @@ type stepSession struct {
 }
 
 func newSession() *stepSession {
-	ret := stepSession{*session.New()}
+	ret := stepSession{*session.New(config.GlobalAgentConfig.TargetURL, config.GlobalAgentConfig.PullSecretToken)}
 	return &ret
 }
 

@@ -9,12 +9,11 @@ import (
 	"github.com/openshift/assisted-service/client"
 	"github.com/openshift/assisted-service/pkg/auth"
 	"github.com/openshift/assisted-service/pkg/requestid"
-	"github.com/ori-amizur/introspector/src/config"
 	"github.com/sirupsen/logrus"
 )
 
-func createUrl() string {
-	return fmt.Sprintf("%s/%s", config.GlobalAgentConfig.TargetURL, client.DefaultBasePath)
+func createUrl(inventoryUrl string) string {
+	return fmt.Sprintf("%s/%s", inventoryUrl, client.DefaultBasePath)
 }
 
 type InventorySession struct {
@@ -35,21 +34,21 @@ func (i *InventorySession) Client() *client.AssistedInstall {
 	return i.client
 }
 
-func createBmInventoryClient() *client.AssistedInstall {
+func createBmInventoryClient(inventoryUrl string, pullSecretToken string) *client.AssistedInstall {
 	clientConfig := client.Config{}
-	clientConfig.URL, _ = url.Parse(createUrl())
+	clientConfig.URL, _ = url.Parse(createUrl(inventoryUrl))
 	clientConfig.Transport = requestid.Transport(http.DefaultTransport)
-	clientConfig.AuthInfo = auth.AgentAuthHeaderWriter(config.GlobalAgentConfig.PullSecretToken)
+	clientConfig.AuthInfo = auth.AgentAuthHeaderWriter(pullSecretToken)
 	bmInventory := client.New(clientConfig)
 	return bmInventory
 }
 
-func New() *InventorySession {
+func New(inventoryUrl string, pullSecretToken string) *InventorySession {
 	id := requestid.NewID()
 	ret := InventorySession{
 		ctx:    requestid.ToContext(context.Background(), id),
 		logger: requestid.RequestIDLogger(logrus.StandardLogger(), id),
-		client: createBmInventoryClient(),
+		client: createBmInventoryClient(inventoryUrl, pullSecretToken),
 	}
 	return &ret
 }
